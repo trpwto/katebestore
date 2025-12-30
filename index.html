@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segera Hadir - Website Sedang Dibangun</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#6366f1', // Indigo 500
+                        secondary: '#a855f7', // Purple 500
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Glassmorphism styles */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .countdown-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Background Animation Shapes */
+        .shape-1 {
+            background: linear-gradient(#6366f1, #a855f7);
+        }
+        .shape-2 {
+            background: linear-gradient(#ec4899, #8b5cf6);
+        }
+        .shape-3 {
+            background: linear-gradient(#3b82f6, #06b6d4);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center overflow-hidden relative selection:bg-indigo-500 selection:text-white">
+
+    <!-- Animated Background Shapes -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+        <div class="absolute top-0 left-1/4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob shape-1"></div>
+        <div class="absolute top-0 right-1/4 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000 shape-2"></div>
+        <div class="absolute -bottom-8 left-1/3 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000 shape-3"></div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+            
+            <!-- Logo / Brand Name -->
+            <div class="mb-8 animate-fade-in" style="animation-delay: 0.1s;">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 mb-4 shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-rocket text-2xl text-white"></i>
+                </div>
+                <h2 class="text-xl font-semibold tracking-widest text-indigo-300 uppercase">Katebe Store</h2>
+            </div>
+
+            <!-- Main Heading -->
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight animate-fade-in" style="animation-delay: 0.2s;">
+                Kami Sedang Membangun <br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Sesuatu yang Hebat</span>
+            </h1>
+
+            <p class="text-gray-400 text-lg md:text-xl mb-10 max-w-2xl mx-auto animate-fade-in" style="animation-delay: 0.3s;">
+                Website kami sedang dalam tahap pengembangan. Kami akan segera hadir dengan pengalaman baru yang luar biasa dalam waktu:
+            </p>
+
+            <!-- Countdown Timer Section -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-12 animate-fade-in" style="animation-delay: 0.4s;">
+                <!-- Hari -->
+                <div class="countdown-item rounded-2xl p-4 md:p-6 backdrop-blur-md">
+                    <div class="text-3xl md:text-5xl font-bold text-white mb-2" id="days">00</div>
+                    <div class="text-sm text-gray-400 uppercase tracking-wider font-semibold">Hari</div>
+                </div>
+                <!-- Jam -->
+                <div class="countdown-item rounded-2xl p-4 md:p-6 backdrop-blur-md">
+                    <div class="text-3xl md:text-5xl font-bold text-white mb-2" id="hours">00</div>
+                    <div class="text-sm text-gray-400 uppercase tracking-wider font-semibold">Jam</div>
+                </div>
+                <!-- Menit -->
+                <div class="countdown-item rounded-2xl p-4 md:p-6 backdrop-blur-md">
+                    <div class="text-3xl md:text-5xl font-bold text-white mb-2" id="minutes">00</div>
+                    <div class="text-sm text-gray-400 uppercase tracking-wider font-semibold">Menit</div>
+                </div>
+                <!-- Detik -->
+                <div class="countdown-item rounded-2xl p-4 md:p-6 backdrop-blur-md border-indigo-500/30">
+                    <div class="text-3xl md:text-5xl font-bold text-indigo-400 mb-2" id="seconds">00</div>
+                    <div class="text-sm text-gray-400 uppercase tracking-wider font-semibold">Detik</div>
+                </div>
+            </div>
+
+            <!-- Newsletter / Notify Me -->
+            <div class="max-w-md mx-auto animate-fade-in glass-card rounded-xl p-2" style="animation-delay: 0.5s;">
+                <form onsubmit="event.preventDefault(); alert('Terima kasih! Email Anda telah terdaftar.');" class="flex flex-col sm:flex-row gap-2">
+                    <input type="email" placeholder="Masukkan email Anda" required
+                        class="flex-1 bg-transparent border border-gray-700 text-white placeholder-gray-500 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 outline-none transition-all hover:border-gray-600">
+                    <button type="submit" 
+                        class="text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-6 py-3 transition-all duration-300 shadow-lg shadow-indigo-500/20 whitespace-nowrap">
+                        Beri Tahu Saya
+                    </button>
+                </form>
+            </div>
+
+            <!-- Social Links & Footer -->
+            <div class="mt-12 text-gray-500 text-sm animate-fade-in" style="animation-delay: 0.6s;">
+                <div class="flex justify-center space-x-6 mb-6">
+                    <a href="#" class="hover:text-white transition-colors duration-300"><i class="fab fa-facebook-f text-xl"></i></a>
+                    <a href="#" class="hover:text-white transition-colors duration-300"><i class="fab fa-twitter text-xl"></i></a>
+                    <a href="#" class="hover:text-white transition-colors duration-300"><i class="fab fa-instagram text-xl"></i></a>
+                    <a href="#" class="hover:text-white transition-colors duration-300"><i class="fab fa-linkedin-in text-xl"></i></a>
+                </div>
+                <p>&copy; 2024 Brand Anda. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Countdown Logic -->
+    <script>
+        // PENGATURAN WAKTU
+        // Saat ini diatur untuk 30 hari dari waktu halaman dibuka.
+        // Jika ingin tanggal spesifik (misal: 1 Januari 2026), ganti baris di bawah ini.
+        
+        // Opsi 1: 30 Hari dari sekarang
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + 30); 
+
+        // Opsi 2: Tanggal Tetap (Hapus tanda komentar di bawah jika ingin menggunakan ini)
+        // const targetDate = new Date("Jan 1, 2026 00:00:00").getTime();
+
+        const countdownElements = {
+            days: document.getElementById('days'),
+            hours: document.getElementById('hours'),
+            minutes: document.getElementById('minutes'),
+            seconds: document.getElementById('seconds')
+        };
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                // Apa yang terjadi jika waktu habis
+                clearInterval(interval);
+                document.querySelector('.grid').innerHTML = '<div class="col-span-4 text-3xl font-bold text-white">Kami Sudah Live!</div>';
+                return;
+            }
+
+            // Perhitungan waktu
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Update DOM dengan format 2 digit (misal: 05 bukan 5)
+            countdownElements.days.innerText = days < 10 ? '0' + days : days;
+            countdownElements.hours.innerText = hours < 10 ? '0' + hours : hours;
+            countdownElements.minutes.innerText = minutes < 10 ? '0' + minutes : minutes;
+            countdownElements.seconds.innerText = seconds < 10 ? '0' + seconds : seconds;
+        }
+
+        // Jalankan fungsi setiap 1 detik
+        const interval = setInterval(updateCountdown, 1000);
+        
+        // Jalankan sekali di awal untuk menghindari delay 1 detik pertama
+        updateCountdown();
+    </script>
+</body>
+</html>

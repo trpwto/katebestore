@@ -298,7 +298,8 @@
                     'autoplay': 1,
                     'controls': 0,
                     'showinfo': 0,
-                    'loop': 1
+                    'loop': 1,
+                    'origin': window.location.origin
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -308,10 +309,12 @@
         }
 
         function onPlayerReady(event) {
+            // Set volume ke 50%
+            event.target.setVolume(50);
             // Coba acak playlist
             event.target.setShuffle(true);
             // Mulai playlist dari index acak agar benar-benar shuffle
-            event.target.playVideoAt(Math.floor(Math.random() * 50)); 
+            event.target.playVideoAt(Math.floor(Math.random() * 20)); 
             
             updateTrackInfo();
         }
@@ -357,6 +360,17 @@
                 document.getElementById('track-name').innerText = title || "Memutar Musik...";
             }
         }
+
+        // --- HACK AUTOPLAY ---
+        // Jika browser memblokir audio otomatis, kode ini akan menjalankannya saat
+        // user melakukan klik PERTAMA KALI di mana saja di halaman ini.
+        document.addEventListener('click', function() {
+            if (player && typeof player.playVideo === 'function') {
+                if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                    player.playVideo();
+                }
+            }
+        }, { once: true });
     </script>
 </body>
 </html>

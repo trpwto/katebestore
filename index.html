@@ -167,9 +167,45 @@
                 </form>
             </div>
 
+            <!-- Music Player Widget (Dipindahkan ke sini & dibuat statis) -->
+            <div class="flex justify-center mb-6 animate-fade-in" style="animation-delay: 0.6s;">
+                <div class="glass-card p-3 pr-5 rounded-full flex items-center gap-3 shadow-2xl bg-gray-900/50 hover:bg-gray-800/50 transition-colors">
+                    <!-- Visualizer / Icon -->
+                    <div id="visualizer" class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center relative overflow-hidden shrink-0 paused">
+                         <div class="music-bars flex gap-1 items-end h-5 pb-1">
+                            <span class="bar animate-music" style="animation-delay: 0s;"></span>
+                            <span class="bar animate-music" style="animation-delay: 0.2s;"></span>
+                            <span class="bar animate-music" style="animation-delay: 0.4s;"></span>
+                         </div>
+                    </div>
+                    
+                    <!-- Controls & Info -->
+                    <div class="flex flex-col text-left">
+                        <!-- Marquee Text untuk Judul Lagu -->
+                        <div class="w-32 overflow-hidden relative h-4 mb-1">
+                            <div id="track-name" class="text-xs text-indigo-200 font-medium whitespace-nowrap absolute animate-none">
+                                Memuat Musik...
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-4">
+                            <button onclick="prevTrack()" class="text-gray-300 hover:text-white text-xs transition-colors" title="Sebelumnya">
+                                <i class="fa-solid fa-backward-step"></i>
+                            </button>
+                            <button id="playPauseBtn" onclick="togglePlay()" class="text-white hover:text-indigo-300 text-sm w-5 transition-colors" title="Play/Pause">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <button onclick="nextTrack()" class="text-gray-300 hover:text-white text-xs transition-colors" title="Selanjutnya">
+                                <i class="fa-solid fa-forward-step"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Social Links & Footer -->
             <!-- Kurangi margin top -->
-            <div class="mt-6 text-gray-500 text-sm animate-fade-in" style="animation-delay: 0.6s;">
+            <div class="mt-4 text-gray-500 text-sm animate-fade-in" style="animation-delay: 0.7s;">
                 <p class="mb-4 text-gray-400">Ikuti perkembangan kami di:</p>
                 <div class="flex justify-center space-x-6 mb-6">
                     <!-- Instagram -->
@@ -188,42 +224,6 @@
                     </a>
                 </div>
                 <p>&copy; 2026 Katebe Store. All rights reserved.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Music Player Widget -->
-    <div class="fixed bottom-4 right-4 z-50 animate-fade-in" style="animation-delay: 0.8s;">
-        <div class="glass-card p-3 pr-5 rounded-full flex items-center gap-3 shadow-2xl bg-gray-900/50">
-            <!-- Visualizer / Icon -->
-            <div id="visualizer" class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center relative overflow-hidden shrink-0 paused">
-                 <div class="music-bars flex gap-1 items-end h-5 pb-1">
-                    <span class="bar animate-music" style="animation-delay: 0s;"></span>
-                    <span class="bar animate-music" style="animation-delay: 0.2s;"></span>
-                    <span class="bar animate-music" style="animation-delay: 0.4s;"></span>
-                 </div>
-            </div>
-            
-            <!-- Controls & Info -->
-            <div class="flex flex-col">
-                <!-- Marquee Text untuk Judul Lagu -->
-                <div class="w-32 overflow-hidden relative h-4 mb-1">
-                    <div id="track-name" class="text-xs text-indigo-200 font-medium whitespace-nowrap absolute animate-none">
-                        Memuat Musik...
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-4">
-                    <button onclick="prevTrack()" class="text-gray-300 hover:text-white text-xs transition-colors" title="Sebelumnya">
-                        <i class="fa-solid fa-backward-step"></i>
-                    </button>
-                    <button id="playPauseBtn" onclick="togglePlay()" class="text-white hover:text-indigo-300 text-sm w-5 transition-colors" title="Play/Pause">
-                        <i class="fa-solid fa-play"></i>
-                    </button>
-                    <button onclick="nextTrack()" class="text-gray-300 hover:text-white text-xs transition-colors" title="Selanjutnya">
-                        <i class="fa-solid fa-forward-step"></i>
-                    </button>
-                </div>
             </div>
         </div>
     </div>

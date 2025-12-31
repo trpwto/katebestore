@@ -129,7 +129,7 @@
             </div>
 
             <!-- Newsletter / Notify Me -->
-            <div class="max-w-md mx-auto animate-fade-in glass-card rounded-xl p-2" style="animation-delay: 0.5s;">
+            <div class="max-w-md mx-auto mb-10 animate-fade-in glass-card rounded-xl p-2" style="animation-delay: 0.5s;">
                 <form onsubmit="event.preventDefault(); alert('Terima kasih! Email Anda telah terdaftar.');" class="flex flex-col sm:flex-row gap-2">
                     <input type="email" placeholder="Masukkan email Anda" required
                         class="flex-1 bg-transparent border border-gray-700 text-white placeholder-gray-500 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-3 outline-none transition-all hover:border-gray-600">
@@ -141,30 +141,54 @@
             </div>
 
             <!-- Social Links & Footer -->
-            <div class="mt-12 text-gray-500 text-sm animate-fade-in" style="animation-delay: 0.6s;">
-                <div class="flex justify-center space-x-6 mb-6">
-                    <a href="#" class="hover:text-white transition-colors duration-300"><i class="fab fa-facebook-f text-xl"></i></a>
-                    <a href="#" class="hover:text-white transition-colors duration-300"><i class="fab fa-twitter text-xl"></i></a>
-                    <a href="#" class="hover:text-white transition-colors duration-300"><i class="fab fa-instagram text-xl"></i></a>
-                    <a href="#" class="hover:text-white transition-colors duration-300"><i class="fab fa-linkedin-in text-xl"></i></a>
+            <div class="mt-8 text-gray-500 text-sm animate-fade-in" style="animation-delay: 0.6s;">
+                <p class="mb-4 text-gray-400">Ikuti perkembangan kami di:</p>
+                <div class="flex justify-center space-x-6 mb-8">
+                    <!-- Instagram: GANTI '#' DENGAN LINK IG ANDA -->
+                    <a href="https://www.instagram.com/katebe.id/" target="_blank" class="group relative flex items-center justify-center w-12 h-12 bg-white/10 rounded-full hover:bg-gradient-to-tr hover:from-yellow-400 hover:via-red-500 hover:to-purple-500 transition-all duration-300 backdrop-blur-sm border border-white/10">
+                        <i class="fab fa-instagram text-2xl text-white group-hover:scale-110 transition-transform"></i>
+                    </a>
+                    
+                    <!-- TikTok: GANTI '#' DENGAN LINK TIKTOK ANDA -->
+                    <a href="https://www.tiktok.com/@katebeid" target="_blank" class="group relative flex items-center justify-center w-12 h-12 bg-white/10 rounded-full hover:bg-black transition-all duration-300 backdrop-blur-sm border border-white/10">
+                        <i class="fab fa-tiktok text-2xl text-white group-hover:scale-110 transition-transform"></i>
+                    </a>
+
+                    <!-- WhatsApp: GANTI '#' DENGAN LINK WA ANDA (contoh: https://wa.me/62812345678) -->
+                    <a href="https://wa.me/6283879389962" target="_blank" class="group relative flex items-center justify-center w-12 h-12 bg-white/10 rounded-full hover:bg-green-500 transition-all duration-300 backdrop-blur-sm border border-white/10">
+                        <i class="fab fa-whatsapp text-2xl text-white group-hover:scale-110 transition-transform"></i>
+                    </a>
                 </div>
-                <p>&copy; 2024 Brand Anda. All rights reserved.</p>
+                <p>&copy; 2026 Katebe Store. All rights reserved.</p>
             </div>
         </div>
     </div>
 
     <!-- JavaScript Countdown Logic -->
     <script>
-        // PENGATURAN WAKTU
-        // Saat ini diatur untuk 30 hari dari waktu halaman dibuka.
-        // Jika ingin tanggal spesifik (misal: 1 Januari 2026), ganti baris di bawah ini.
-        
-        // Opsi 1: 30 Hari dari sekarang
-        const targetDate = new Date();
-        targetDate.setDate(targetDate.getDate() + 30); 
+        // LOGIKA WAKTU PERSISTEN (TIDAK BERULANG SAAT REFRESH)
+        const storageKey = 'katebe_countdown_target';
+        let savedTarget = localStorage.getItem(storageKey);
+        let targetDate;
 
-        // Opsi 2: Tanggal Tetap (Hapus tanda komentar di bawah jika ingin menggunakan ini)
-        // const targetDate = new Date("Jan 1, 2026 00:00:00").getTime();
+        if (savedTarget) {
+            // Jika sudah ada data tersimpan, pakai data tersebut
+            targetDate = new Date(parseInt(savedTarget));
+            
+            // Cek apakah waktu sudah lewat? Jika lewat reset (opsional) atau biarkan 0
+            // Jika ingin reset otomatis setelah habis, uncomment baris di bawah:
+            // if (new Date() > targetDate) { targetDate = setAndSaveNewDate(); }
+        } else {
+            // Jika belum ada (pengunjung baru), set 30 hari dari sekarang
+            targetDate = setAndSaveNewDate();
+        }
+
+        function setAndSaveNewDate() {
+            const newDate = new Date();
+            newDate.setDate(newDate.getDate() + 30); // Tambah 30 hari
+            localStorage.setItem(storageKey, newDate.getTime());
+            return newDate;
+        }
 
         const countdownElements = {
             days: document.getElementById('days'),
@@ -178,9 +202,11 @@
             const distance = targetDate - now;
 
             if (distance < 0) {
-                // Apa yang terjadi jika waktu habis
                 clearInterval(interval);
-                document.querySelector('.grid').innerHTML = '<div class="col-span-4 text-3xl font-bold text-white">Kami Sudah Live!</div>';
+                document.querySelector('.grid').innerHTML = '<div class="col-span-4 text-3xl font-bold text-white animate-pulse">Kami Sudah Live!</div>';
+                
+                // Opsional: Hapus storage saat waktu habis agar user bisa melihat countdown baru jika nanti Anda update
+                // localStorage.removeItem(storageKey); 
                 return;
             }
 
@@ -190,7 +216,7 @@
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // Update DOM dengan format 2 digit (misal: 05 bukan 5)
+            // Update DOM dengan format 2 digit
             countdownElements.days.innerText = days < 10 ? '0' + days : days;
             countdownElements.hours.innerText = hours < 10 ? '0' + hours : hours;
             countdownElements.minutes.innerText = minutes < 10 ? '0' + minutes : minutes;
@@ -199,8 +225,6 @@
 
         // Jalankan fungsi setiap 1 detik
         const interval = setInterval(updateCountdown, 1000);
-        
-        // Jalankan sekali di awal untuk menghindari delay 1 detik pertama
         updateCountdown();
     </script>
 </body>

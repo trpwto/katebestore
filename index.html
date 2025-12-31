@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Katebe Store - Segera Hadir</title>
+    <title>Katebe Store - Segera Hadir..</title>
     
     <!-- Favicon (Menggunakan Emoji Roket) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
@@ -32,6 +32,7 @@
                         'blob': 'blob 7s infinite',
                         'fade-in': 'fadeIn 1s ease-out forwards',
                         'music': 'music-bar 1s ease-in-out infinite',
+                        'bounce-slow': 'bounce 3s infinite',
                     },
                     keyframes: {
                         blob: {
@@ -230,6 +231,12 @@
 
     <!-- Hidden YouTube Player Element -->
     <div id="youtube-player" class="hidden"></div>
+    
+    <!-- Autoplay Notification Toast -->
+    <div id="autoplay-toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center gap-3 transition-all duration-500 opacity-0 translate-y-10 pointer-events-none">
+        <div class="animate-bounce-slow text-lg">👆</div>
+        <div class="text-sm font-medium">Klik layar untuk memutar musik</div>
+    </div>
 
     <!-- JavaScript untuk Countdown & Music Player -->
     <script>
@@ -313,10 +320,21 @@
             event.target.setVolume(50);
             // Coba acak playlist
             event.target.setShuffle(true);
-            // Mulai playlist dari index acak agar benar-benar shuffle
+            // Mulai playlist dari index acak
             event.target.playVideoAt(Math.floor(Math.random() * 20)); 
             
+            // COBA FORCE PLAY
+            event.target.playVideo();
+
             updateTrackInfo();
+            
+            // CEK APAKAH AUTOPLAY BERHASIL ATAU DIBLOKIR BROWSER
+            setTimeout(function() {
+                // Jika setelah 2 detik statusnya tidak playing atau buffering, berarti diblokir
+                if (player.getPlayerState() !== YT.PlayerState.PLAYING && player.getPlayerState() !== YT.PlayerState.BUFFERING) {
+                    showAutoplayToast();
+                }
+            }, 2000);
         }
 
         function onPlayerStateChange(event) {
@@ -324,6 +342,7 @@
                 isPlaying = true;
                 document.getElementById('playPauseBtn').innerHTML = '<i class="fa-solid fa-pause"></i>';
                 document.getElementById('visualizer').classList.remove('paused');
+                hideAutoplayToast(); // Sembunyikan notifikasi jika sudah main
                 updateTrackInfo();
             } else {
                 isPlaying = false;
@@ -361,15 +380,36 @@
             }
         }
 
-        // --- HACK AUTOPLAY ---
-        // Jika browser memblokir audio otomatis, kode ini akan menjalankannya saat
-        // user melakukan klik PERTAMA KALI di mana saja di halaman ini.
+        // --- UX HELPERS ---
+        function showAutoplayToast() {
+            const toast = document.getElementById('autoplay-toast');
+            toast.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+        }
+
+        function hideAutoplayToast() {
+            const toast = document.getElementById('autoplay-toast');
+            toast.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+        }
+
+        // --- GLOBAL INTERACTION LISTENER ---
+        // Menangkap klik di mana saja untuk memicu play jika diblokir
         document.addEventListener('click', function() {
             if (player && typeof player.playVideo === 'function') {
                 if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
                     player.playVideo();
                 }
             }
+            hideAutoplayToast();
+        }, { once: true });
+        
+        // Juga tangkap touchstart untuk mobile
+        document.addEventListener('touchstart', function() {
+            if (player && typeof player.playVideo === 'function') {
+                if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                    player.playVideo();
+                }
+            }
+            hideAutoplayToast();
         }, { once: true });
     </script>
 </body>

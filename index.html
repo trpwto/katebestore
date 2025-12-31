@@ -31,6 +31,7 @@
                     animation: {
                         'blob': 'blob 7s infinite',
                         'fade-in': 'fadeIn 1s ease-out forwards',
+                        'music': 'music-bar 1s ease-in-out infinite',
                     },
                     keyframes: {
                         blob: {
@@ -42,6 +43,10 @@
                         fadeIn: {
                             '0%': { opacity: '0', transform: 'translateY(20px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        'music-bar': {
+                            '0%, 100%': { height: '20%' },
+                            '50%': { height: '100%' }
                         }
                     }
                 }
@@ -73,6 +78,19 @@
         }
         .shape-3 {
             background: linear-gradient(#3b82f6, #06b6d4);
+        }
+
+        /* Music Player Specifics */
+        .music-bars .bar {
+            width: 4px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 2px;
+            bottom: 0;
+        }
+        .paused .bar {
+            animation-play-state: paused !important;
+            height: 10% !important;
+            transition: height 0.3s ease;
         }
     </style>
 </head>
@@ -174,30 +192,58 @@
         </div>
     </div>
 
-    <!-- JavaScript Countdown Logic -->
+    <!-- Music Player Widget -->
+    <div class="fixed bottom-4 right-4 z-50 animate-fade-in" style="animation-delay: 0.8s;">
+        <div class="glass-card p-3 pr-5 rounded-full flex items-center gap-3 shadow-2xl bg-gray-900/50">
+            <!-- Visualizer / Icon -->
+            <div id="visualizer" class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center relative overflow-hidden shrink-0 paused">
+                 <div class="music-bars flex gap-1 items-end h-5 pb-1">
+                    <span class="bar animate-music" style="animation-delay: 0s;"></span>
+                    <span class="bar animate-music" style="animation-delay: 0.2s;"></span>
+                    <span class="bar animate-music" style="animation-delay: 0.4s;"></span>
+                 </div>
+            </div>
+            
+            <!-- Controls & Info -->
+            <div class="flex flex-col">
+                <!-- Marquee Text untuk Judul Lagu -->
+                <div class="w-32 overflow-hidden relative h-4 mb-1">
+                    <div id="track-name" class="text-xs text-indigo-200 font-medium whitespace-nowrap absolute animate-none">
+                        Memuat Musik...
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <button onclick="prevTrack()" class="text-gray-300 hover:text-white text-xs transition-colors" title="Sebelumnya">
+                        <i class="fa-solid fa-backward-step"></i>
+                    </button>
+                    <button id="playPauseBtn" onclick="togglePlay()" class="text-white hover:text-indigo-300 text-sm w-5 transition-colors" title="Play/Pause">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                    <button onclick="nextTrack()" class="text-gray-300 hover:text-white text-xs transition-colors" title="Selanjutnya">
+                        <i class="fa-solid fa-forward-step"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden YouTube Player Element -->
+    <div id="youtube-player" class="hidden"></div>
+
+    <!-- JavaScript untuk Countdown & Music Player -->
     <script>
-        // LOGIKA WAKTU PERSISTEN (TIDAK BERULANG SAAT REFRESH)
+        // --- LOGIKA COUNTDOWN ---
         const storageKey = 'katebe_countdown_target';
         let savedTarget = localStorage.getItem(storageKey);
         let targetDate;
 
         if (savedTarget) {
-            // Jika sudah ada data tersimpan, pakai data tersebut
             targetDate = new Date(parseInt(savedTarget));
-            
-            // Cek apakah waktu sudah lewat? Jika lewat reset (opsional) atau biarkan 0
-            // Jika ingin reset otomatis setelah habis, uncomment baris di bawah:
-            // if (new Date() > targetDate) { targetDate = setAndSaveNewDate(); }
         } else {
-            // Jika belum ada (pengunjung baru), set 30 hari dari sekarang
-            targetDate = setAndSaveNewDate();
-        }
-
-        function setAndSaveNewDate() {
-            const newDate = new Date();
-            newDate.setDate(newDate.getDate() + 30); // Tambah 30 hari
-            localStorage.setItem(storageKey, newDate.getTime());
-            return newDate;
+            targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 30);
+            localStorage.setItem(storageKey, targetDate.getTime());
         }
 
         const countdownElements = {
@@ -214,28 +260,103 @@
             if (distance < 0) {
                 clearInterval(interval);
                 document.querySelector('.grid').innerHTML = '<div class="col-span-4 text-3xl font-bold text-white animate-pulse">Kami Sudah Live!</div>';
-                
-                // Opsional: Hapus storage saat waktu habis agar user bisa melihat countdown baru jika nanti Anda update
-                // localStorage.removeItem(storageKey); 
                 return;
             }
 
-            // Perhitungan waktu
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // Update DOM dengan format 2 digit
             countdownElements.days.innerText = days < 10 ? '0' + days : days;
             countdownElements.hours.innerText = hours < 10 ? '0' + hours : hours;
             countdownElements.minutes.innerText = minutes < 10 ? '0' + minutes : minutes;
             countdownElements.seconds.innerText = seconds < 10 ? '0' + seconds : seconds;
         }
 
-        // Jalankan fungsi setiap 1 detik
         const interval = setInterval(updateCountdown, 1000);
         updateCountdown();
+
+        // --- LOGIKA MUSIC PLAYER (YOUTUBE API) ---
+        var player;
+        var isPlaying = false;
+        
+        // Load YouTube IFrame API
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '0',
+                width: '0',
+                playerVars: {
+                    'listType': 'playlist',
+                    // Playlist ID baru dari link yang Anda berikan
+                    'list': 'PLXSxVpZ4kWOndWpNaXvln4JTe-VbYIIu3', 
+                    'autoplay': 1,
+                    'controls': 0,
+                    'showinfo': 0,
+                    'loop': 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            // Coba acak playlist
+            event.target.setShuffle(true);
+            // Mulai playlist dari index acak agar benar-benar shuffle
+            event.target.playVideoAt(Math.floor(Math.random() * 50)); 
+            
+            updateTrackInfo();
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING) {
+                isPlaying = true;
+                document.getElementById('playPauseBtn').innerHTML = '<i class="fa-solid fa-pause"></i>';
+                document.getElementById('visualizer').classList.remove('paused');
+                updateTrackInfo();
+            } else {
+                isPlaying = false;
+                document.getElementById('playPauseBtn').innerHTML = '<i class="fa-solid fa-play"></i>';
+                document.getElementById('visualizer').classList.add('paused');
+            }
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
+        }
+
+        function nextTrack() {
+            player.nextVideo();
+        }
+
+        function prevTrack() {
+            player.previousVideo();
+        }
+
+        function updateTrackInfo() {
+            // Mendapatkan data video saat ini
+            if(player && player.getVideoData) {
+                var videoData = player.getVideoData();
+                var title = videoData.title;
+                // Potong judul jika terlalu panjang atau mengandung kata-kata umum YouTube
+                if (title.length > 20) {
+                    title = title.substring(0, 25) + "...";
+                }
+                document.getElementById('track-name').innerText = title || "Memutar Musik...";
+            }
+        }
     </script>
 </body>
 </html>
